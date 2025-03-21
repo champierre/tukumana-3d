@@ -239,14 +239,16 @@ function createWindow(THREE, room, x, y, z) {
 export function createTable(THREE, width, height, depth, color) {
     const table = new THREE.Group();
     
-    // テーブルトップ
-    const topGeometry = new THREE.BoxGeometry(width, height / 10, depth);
+    // テーブルトップ（六角形）
+    const radius = Math.max(width, depth) / 2;
+    const topGeometry = new THREE.CylinderGeometry(radius, radius, height / 10, 6);
     const topMaterial = new THREE.MeshStandardMaterial({ 
         color: color,
         roughness: 0.8,
         metalness: 0.2
     });
     const top = new THREE.Mesh(topGeometry, topMaterial);
+    top.rotation.x = Math.PI / 2; // 円柱を横向きにする
     top.position.y = height - height / 20;
     top.castShadow = true;
     top.receiveShadow = true;
@@ -260,13 +262,14 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     
-    // 4本の脚を追加
-    const legPositions = [
-        { x: -width / 2 + width / 40, z: -depth / 2 + depth / 40 },
-        { x: width / 2 - width / 40, z: -depth / 2 + depth / 40 },
-        { x: width / 2 - width / 40, z: depth / 2 - depth / 40 },
-        { x: -width / 2 + width / 40, z: depth / 2 - depth / 40 }
-    ];
+    // 6本の脚を追加（六角形の各頂点に）
+    const legPositions = [];
+    for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i;
+        const x = Math.cos(angle) * (radius - width / 40);
+        const z = Math.sin(angle) * (radius - depth / 40);
+        legPositions.push({ x, z });
+    }
     
     legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
