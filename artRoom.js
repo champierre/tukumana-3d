@@ -388,6 +388,78 @@ export function createTable(THREE, width, height, depth, color) {
     return table;
 }
 
+// コの字型テーブルを作成する関数
+export function createUShapedTable(THREE, width, height, depth, color) {
+    const table = new THREE.Group();
+    
+    // テーブルの厚さ
+    const thickness = height / 10;
+    
+    // テーブルトップのマテリアル
+    const topMaterial = new THREE.MeshStandardMaterial({ 
+        color: color,
+        roughness: 0.8,
+        metalness: 0.2
+    });
+    
+    // 脚のマテリアル
+    const legMaterial = new THREE.MeshStandardMaterial({ 
+        color: COLORS.WOOD,
+        roughness: 0.8,
+        metalness: 0.2
+    });
+    
+    // 中央のテーブルトップ
+    const centerTopGeometry = new THREE.BoxGeometry(width, thickness, depth);
+    const centerTop = new THREE.Mesh(centerTopGeometry, topMaterial);
+    centerTop.position.y = height - thickness / 2;
+    centerTop.castShadow = true;
+    centerTop.receiveShadow = true;
+    table.add(centerTop);
+    
+    // 左側のテーブルトップ
+    const leftTopGeometry = new THREE.BoxGeometry(thickness, thickness, depth);
+    const leftTop = new THREE.Mesh(leftTopGeometry, topMaterial);
+    leftTop.position.set(-width / 2 - thickness / 2, height - thickness / 2, 0);
+    leftTop.castShadow = true;
+    leftTop.receiveShadow = true;
+    table.add(leftTop);
+    
+    // 右側のテーブルトップ
+    const rightTopGeometry = new THREE.BoxGeometry(thickness, thickness, depth);
+    const rightTop = new THREE.Mesh(rightTopGeometry, topMaterial);
+    rightTop.position.set(width / 2 + thickness / 2, height - thickness / 2, 0);
+    rightTop.castShadow = true;
+    rightTop.receiveShadow = true;
+    table.add(rightTop);
+    
+    // 脚の太さ
+    const legThickness = width / 30;
+    
+    // テーブルの4隅に1本ずつ脚を配置
+    const legPositions = [
+        // 左前の脚
+        { x: -width / 2 - thickness + legThickness / 2, z: depth / 2 - legThickness / 2 },
+        // 左後ろの脚
+        { x: -width / 2 - thickness + legThickness / 2, z: -depth / 2 + legThickness / 2 },
+        // 右前の脚
+        { x: width / 2 + thickness - legThickness / 2, z: depth / 2 - legThickness / 2 },
+        // 右後ろの脚
+        { x: width / 2 + thickness - legThickness / 2, z: -depth / 2 + legThickness / 2 }
+    ];
+    
+    legPositions.forEach(pos => {
+        const legGeometry = new THREE.BoxGeometry(legThickness, height, legThickness);
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos.x, height / 2, pos.z);
+        leg.castShadow = true;
+        leg.receiveShadow = true;
+        table.add(leg);
+    });
+    
+    return table;
+}
+
 // 椅子を作成する関数
 export function createChair(THREE) {
     const chair = new THREE.Group();
