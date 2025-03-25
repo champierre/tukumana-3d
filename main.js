@@ -95,31 +95,55 @@ function addLights() {
 
 // 家具を追加する関数
 function addFurniture() {
-    // 教師用デスク
-    const teacherDesk = ArtRoom.createTable(
+    // ディスプレイの正面にコの字型テーブルを配置
+    const uShapedTable = ArtRoom.createUShapedTable(
         THREE,
-        ArtRoom.DIMENSIONS.TABLE_WIDTH * 1.5, 
-        ArtRoom.DIMENSIONS.TABLE_HEIGHT, 
-        ArtRoom.DIMENSIONS.TABLE_LENGTH * 1.5,
+        ArtRoom.DIMENSIONS.TABLE_WIDTH * 3, // 幅を広く
+        ArtRoom.DIMENSIONS.TABLE_HEIGHT,
+        ArtRoom.DIMENSIONS.TABLE_LENGTH * 1.5, // 奥行きも広く
         ArtRoom.COLORS.TABLE_TOP
     );
-    teacherDesk.position.set(
-        -ArtRoom.DIMENSIONS.ROOM_WIDTH / 4, 
-        ArtRoom.DIMENSIONS.TABLE_HEIGHT / 2, 
-        -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3
+    uShapedTable.position.set(
+        0, // 中央に配置
+        ArtRoom.DIMENSIONS.TABLE_HEIGHT / 2,
+        -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2 // ディスプレイから少し離す
     );
-    scene.add(teacherDesk);
-    furniture.teacherDesk = teacherDesk;
-
-    // 教師用椅子
-    const teacherChair = ArtRoom.createChair(THREE);
-    teacherChair.position.set(
-        -ArtRoom.DIMENSIONS.ROOM_WIDTH / 4, 
-        0, 
-        -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH
+    scene.add(uShapedTable);
+    furniture.uShapedTable = uShapedTable;
+    
+    // コの字型テーブルの周りに椅子を配置（内側に向けて）
+    // 中央前の椅子
+    const frontChair = ArtRoom.createChair(THREE);
+    frontChair.position.set(
+        0,
+        0,
+        -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2 + ArtRoom.DIMENSIONS.TABLE_LENGTH / 2 + ArtRoom.DIMENSIONS.CHAIR_DEPTH / 2
     );
-    scene.add(teacherChair);
-    furniture.teacherChair = teacherChair;
+    frontChair.rotation.y = Math.PI; // 180度回転（内側を向く）
+    scene.add(frontChair);
+    furniture.frontChair = frontChair;
+    
+    // 左側の椅子
+    const leftChair = ArtRoom.createChair(THREE);
+    leftChair.position.set(
+        -ArtRoom.DIMENSIONS.TABLE_WIDTH * 1.5 - ArtRoom.DIMENSIONS.CHAIR_DEPTH / 2,
+        0,
+        -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2
+    );
+    leftChair.rotation.y = -Math.PI / 2; // -90度回転（内側を向く）
+    scene.add(leftChair);
+    furniture.leftChair = leftChair;
+    
+    // 右側の椅子
+    const rightChair = ArtRoom.createChair(THREE);
+    rightChair.position.set(
+        ArtRoom.DIMENSIONS.TABLE_WIDTH * 1.5 + ArtRoom.DIMENSIONS.CHAIR_DEPTH / 2,
+        0,
+        -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2
+    );
+    rightChair.rotation.y = Math.PI / 2; // 90度回転（内側を向く）
+    scene.add(rightChair);
+    furniture.rightChair = rightChair;
 
     // 生徒用テーブル（複数）
     const tablePositions = [
@@ -251,11 +275,11 @@ function loadSTLModel(file) {
         // モデルを90度回転させる（横倒しになっているのを修正）
         mesh.rotation.x = -Math.PI / 2; // X軸周りに-90度回転
         
-        // モデルの位置を調整（教師用デスクの上）
+        // モデルの位置を調整（コの字型テーブルの上）
         mesh.position.set(
-            -ArtRoom.DIMENSIONS.ROOM_WIDTH / 4, 
+            0, // 中央に配置
             ArtRoom.DIMENSIONS.TABLE_HEIGHT + 0.05, // テーブルの上に少し浮かせる
-            -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3
+            -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2 // コの字型テーブルの位置に合わせる
         );
         
         // 影の設定
