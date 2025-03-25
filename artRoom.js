@@ -220,6 +220,10 @@ function createWalls(THREE, room) {
     );
     rightWall.receiveShadow = true;
     room.add(rightWall);
+    
+    // 右側の壁に窓を追加
+    createWindow(THREE, room, DIMENSIONS.ROOM_WIDTH / 2, DIMENSIONS.ROOM_HEIGHT / 2, -DIMENSIONS.ROOM_LENGTH / 4);
+    createWindow(THREE, room, DIMENSIONS.ROOM_WIDTH / 2, DIMENSIONS.ROOM_HEIGHT / 2, DIMENSIONS.ROOM_LENGTH / 4);
 }
 
 // 窓を作成する関数
@@ -247,14 +251,88 @@ function createWindow(THREE, room, x, y, z) {
     );
     const glassMaterial = new THREE.MeshStandardMaterial({ 
         color: COLORS.GLASS,
-        roughness: 0.1,
-        metalness: 0.9,
+        roughness: 0.05,
+        metalness: 0.95,
         transparent: true,
-        opacity: 0.4
+        opacity: 0.1 // さらに透明度を上げる
     });
     const glass = new THREE.Mesh(glassGeometry, glassMaterial);
     glass.position.set(x, y, z);
     room.add(glass);
+    
+    // 窓の外の景色（空）- 窓枠の内側に配置
+    const outsideGeometry = new THREE.PlaneGeometry(
+        DIMENSIONS.WINDOW_WIDTH - 0.2, 
+        DIMENSIONS.WINDOW_HEIGHT - 0.2
+    );
+    
+    // 空のグラデーション
+    const skyCanvas = document.createElement('canvas');
+    skyCanvas.width = 512;
+    skyCanvas.height = 512;
+    const skyContext = skyCanvas.getContext('2d');
+    
+    // グラデーションの作成
+    const gradient = skyContext.createLinearGradient(0, 0, 0, 512);
+    gradient.addColorStop(0, '#87CEEB'); // 空色（上部）
+    gradient.addColorStop(0.7, '#E0F7FF'); // 薄い空色（中部）
+    gradient.addColorStop(1, '#7CFC00'); // 草原色（下部）
+    
+    skyContext.fillStyle = gradient;
+    skyContext.fillRect(0, 0, 512, 512);
+    
+    // 雲を追加
+    skyContext.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    skyContext.beginPath();
+    skyContext.arc(100, 100, 40, 0, Math.PI * 2);
+    skyContext.arc(140, 90, 50, 0, Math.PI * 2);
+    skyContext.arc(180, 100, 40, 0, Math.PI * 2);
+    skyContext.fill();
+    
+    skyContext.beginPath();
+    skyContext.arc(350, 150, 30, 0, Math.PI * 2);
+    skyContext.arc(390, 140, 40, 0, Math.PI * 2);
+    skyContext.arc(430, 150, 30, 0, Math.PI * 2);
+    skyContext.fill();
+    
+    // テクスチャの作成
+    const skyTexture = new THREE.CanvasTexture(skyCanvas);
+    
+    const outsideMaterial = new THREE.MeshBasicMaterial({
+        map: skyTexture,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 1.0
+    });
+    
+    const outside = new THREE.Mesh(outsideGeometry, outsideMaterial);
+    
+    // 窓の内側に配置（窓ガラスのすぐ後ろ）
+    if (Math.abs(x) > Math.abs(z)) {
+        // 左右の壁の窓
+        const offset = x > 0 ? -0.05 : 0.05; // 右側か左側かで調整（内側に配置）
+        outside.position.set(x + offset, y, z);
+        
+        // 窓の向きに合わせて回転
+        if (x > 0) { // 右側の壁
+            outside.rotation.y = Math.PI / 2;
+        } else { // 左側の壁
+            outside.rotation.y = -Math.PI / 2;
+        }
+    } else {
+        // 前後の壁の窓（もし追加する場合）
+        const offset = z > 0 ? -0.05 : 0.05; // 前側か後側かで調整（内側に配置）
+        outside.position.set(x, y, z + offset);
+        
+        // 窓の向きに合わせて回転
+        if (z > 0) { // 前側の壁
+            outside.rotation.y = Math.PI;
+        } else { // 後側の壁
+            outside.rotation.y = 0;
+        }
+    }
+    
+    room.add(outside);
 }
 
 // テーブルを作成する関数
