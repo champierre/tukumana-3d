@@ -273,7 +273,9 @@ export function createTable(THREE, width, height, depth, color) {
     
     legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, 0, pos.z);
+        // 脚の位置を調整して、テーブルトップと接するようにする
+        // テーブルトップの下部（height - height/10）から始まるようにする
+        leg.position.set(pos.x, height/2, pos.z);
         leg.castShadow = true;
         leg.receiveShadow = true;
         table.add(leg);
