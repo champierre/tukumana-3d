@@ -251,6 +251,8 @@ export function createTable(THREE, width, height, depth, color) {
     // テーブルトップの位置を下げる
     // テーブルトップの上部が脚の上部よりも少し下になるように設定
     top.position.y = height * 0.95;
+    // テーブルトップを60度（π/3ラジアン）回転させる
+    top.rotation.y = Math.PI / 3;
     top.castShadow = true;
     top.receiveShadow = true;
     table.add(top);
@@ -268,8 +270,8 @@ export function createTable(THREE, width, height, depth, color) {
     for (let i = 0; i < 6; i++) {
         const angle = (Math.PI / 3) * i;
         // 六角形の内側に脚を配置（半径の60%の位置）
-        const x = Math.cos(angle) * (radius * 0.6);
-        const z = Math.sin(angle) * (radius * 0.6);
+        const x = Math.cos(angle) * (radius * 0.8);
+        const z = Math.sin(angle) * (radius * 0.8);
         legPositions.push({ x, z });
     }
     
