@@ -275,12 +275,11 @@ function loadSTLModel(file) {
         // モデルを90度回転させる（横倒しになっているのを修正）
         mesh.rotation.x = -Math.PI / 2; // X軸周りに-90度回転
         
-        // モデルの位置を調整（コの字型テーブルの上）
-        mesh.position.set(
-            0, // 中央に配置
-            ArtRoom.DIMENSIONS.TABLE_HEIGHT + 0.05, // テーブルの上に少し浮かせる
-            -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2 // コの字型テーブルの位置に合わせる
-        );
+        // モデルの位置を調整（コの字型テーブルの上の中央）
+        // furniture.uShapedTableの位置を直接参照して配置
+        const tablePosition = furniture.uShapedTable.position.clone();
+        tablePosition.y += ArtRoom.DIMENSIONS.TABLE_HEIGHT / 2 + 0.05; // テーブルの上に少し浮かせる
+        mesh.position.copy(tablePosition);
         
         // 影の設定
         mesh.castShadow = true;
