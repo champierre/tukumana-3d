@@ -251,10 +251,10 @@ function createWindow(THREE, room, x, y, z) {
     );
     const glassMaterial = new THREE.MeshStandardMaterial({ 
         color: COLORS.GLASS,
-        roughness: 0.1,
-        metalness: 0.9,
+        roughness: 0.05,
+        metalness: 0.95,
         transparent: true,
-        opacity: 0.4
+        opacity: 0.2
     });
     const glass = new THREE.Mesh(glassGeometry, glassMaterial);
     glass.position.set(x, y, z);
