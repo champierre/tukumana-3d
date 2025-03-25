@@ -262,20 +262,20 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     
-    // 6本の脚を追加（六角形の各頂点に）
+    // 6本の脚を追加（六角形の内側、頂点から床に垂直に）
     const legPositions = [];
     for (let i = 0; i < 6; i++) {
         const angle = (Math.PI / 3) * i;
-        const x = Math.cos(angle) * (radius - width / 40);
-        const z = Math.sin(angle) * (radius - depth / 40);
+        // 六角形の内側に脚を配置（半径の60%の位置）
+        const x = Math.cos(angle) * (radius * 0.6);
+        const z = Math.sin(angle) * (radius * 0.6);
         legPositions.push({ x, z });
     }
     
     legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
-        // 脚の位置を調整して、テーブルトップと接するようにする
-        // テーブルトップの下部（height - height/10）から始まるようにする
-        leg.position.set(pos.x, height/2, pos.z);
+        // 脚の位置を床に接するように設定（y=0）
+        leg.position.set(pos.x, 0, pos.z);
         leg.castShadow = true;
         leg.receiveShadow = true;
         table.add(leg);
