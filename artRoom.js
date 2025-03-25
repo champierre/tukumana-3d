@@ -326,18 +326,7 @@ export function createChair(THREE) {
         );
         const leg = new THREE.Mesh(legGeometry, legMaterial);
         
-        // 脚を少し傾ける（外側に向かって）
-        const tiltAngle = Math.PI / 15; // 約12度
-        
-        if (i === 0) {
-            leg.rotation.x = tiltAngle;
-        } else if (i === 1) {
-            leg.rotation.z = tiltAngle;
-        } else if (i === 2) {
-            leg.rotation.x = -tiltAngle;
-        } else if (i === 3) {
-            leg.rotation.z = -tiltAngle;
-        }
+        // 脚は地面と垂直に配置（回転なし）
         
         // 脚の位置を設定
         leg.position.set(
