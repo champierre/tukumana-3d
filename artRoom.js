@@ -248,7 +248,7 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     const top = new THREE.Mesh(topGeometry, topMaterial);
-    top.rotation.x = Math.PI / 2; // 円柱を横向きにする
+    // 回転を削除して床と平行にする
     top.position.y = height - height / 20;
     top.castShadow = true;
     top.receiveShadow = true;
@@ -286,14 +286,16 @@ export function createTable(THREE, width, height, depth, color) {
 export function createChair(THREE) {
     const chair = new THREE.Group();
     
-    // 座面
-    const seatGeometry = new THREE.BoxGeometry(
-        DIMENSIONS.CHAIR_WIDTH, 
+    // 丸い座面
+    const seatRadius = Math.max(DIMENSIONS.CHAIR_WIDTH, DIMENSIONS.CHAIR_DEPTH) / 2;
+    const seatGeometry = new THREE.CylinderGeometry(
+        seatRadius, 
+        seatRadius, 
         DIMENSIONS.CHAIR_HEIGHT / 10, 
-        DIMENSIONS.CHAIR_DEPTH
+        32
     );
     const seatMaterial = new THREE.MeshStandardMaterial({ 
-        color: COLORS.CHAIR_SEAT,
+        color: COLORS.WOOD,
         roughness: 0.8,
         metalness: 0.2
     });
@@ -303,54 +305,60 @@ export function createChair(THREE) {
     seat.receiveShadow = true;
     chair.add(seat);
     
-    // 背もたれ
-    const backGeometry = new THREE.BoxGeometry(
-        DIMENSIONS.CHAIR_WIDTH, 
-        DIMENSIONS.CHAIR_BACK_HEIGHT, 
-        DIMENSIONS.CHAIR_DEPTH / 10
-    );
-    const backMaterial = new THREE.MeshStandardMaterial({ 
-        color: COLORS.CHAIR_SEAT,
-        roughness: 0.8,
-        metalness: 0.2
-    });
-    const back = new THREE.Mesh(backGeometry, backMaterial);
-    back.position.set(
-        0, 
-        DIMENSIONS.CHAIR_HEIGHT + DIMENSIONS.CHAIR_BACK_HEIGHT / 2, 
-        -DIMENSIONS.CHAIR_DEPTH / 2 + DIMENSIONS.CHAIR_DEPTH / 20
-    );
-    back.castShadow = true;
-    back.receiveShadow = true;
-    chair.add(back);
-    
-    // 脚
-    const legGeometry = new THREE.BoxGeometry(
-        DIMENSIONS.CHAIR_WIDTH / 20, 
+    // 中央の支柱
+    const centralLegGeometry = new THREE.CylinderGeometry(
+        seatRadius / 6, 
+        seatRadius / 6, 
         DIMENSIONS.CHAIR_HEIGHT, 
-        DIMENSIONS.CHAIR_DEPTH / 20
+        16
     );
     const legMaterial = new THREE.MeshStandardMaterial({ 
         color: COLORS.WOOD,
         roughness: 0.8,
         metalness: 0.2
     });
+    const centralLeg = new THREE.Mesh(centralLegGeometry, legMaterial);
+    centralLeg.position.y = DIMENSIONS.CHAIR_HEIGHT / 2;
+    centralLeg.castShadow = true;
+    centralLeg.receiveShadow = true;
+    chair.add(centralLeg);
     
-    // 4本の脚を追加
-    const legPositions = [
-        { x: -DIMENSIONS.CHAIR_WIDTH / 2 + DIMENSIONS.CHAIR_WIDTH / 40, z: -DIMENSIONS.CHAIR_DEPTH / 2 + DIMENSIONS.CHAIR_DEPTH / 40 },
-        { x: DIMENSIONS.CHAIR_WIDTH / 2 - DIMENSIONS.CHAIR_WIDTH / 40, z: -DIMENSIONS.CHAIR_DEPTH / 2 + DIMENSIONS.CHAIR_DEPTH / 40 },
-        { x: DIMENSIONS.CHAIR_WIDTH / 2 - DIMENSIONS.CHAIR_WIDTH / 40, z: DIMENSIONS.CHAIR_DEPTH / 2 - DIMENSIONS.CHAIR_DEPTH / 40 },
-        { x: -DIMENSIONS.CHAIR_WIDTH / 2 + DIMENSIONS.CHAIR_WIDTH / 40, z: DIMENSIONS.CHAIR_DEPTH / 2 - DIMENSIONS.CHAIR_DEPTH / 40 }
-    ];
+    // 脚の台座（十字型）
+    const baseRadius = seatRadius * 0.8;
+    const baseHeight = DIMENSIONS.CHAIR_HEIGHT / 15;
+    const baseGeometry = new THREE.CylinderGeometry(
+        baseRadius / 8, 
+        baseRadius / 6, 
+        baseHeight, 
+        16
+    );
     
-    legPositions.forEach(pos => {
-        const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, DIMENSIONS.CHAIR_HEIGHT / 2, pos.z);
-        leg.castShadow = true;
-        leg.receiveShadow = true;
-        chair.add(leg);
-    });
+    // 4本の脚を放射状に追加
+    for (let i = 0; i < 4; i++) {
+        const angle = (Math.PI / 2) * i;
+        const legLength = baseRadius;
+        
+        // 放射状の脚
+        const radialLegGeometry = new THREE.CylinderGeometry(
+            baseRadius / 12, 
+            baseRadius / 10, 
+            legLength, 
+            8
+        );
+        const radialLeg = new THREE.Mesh(radialLegGeometry, legMaterial);
+        
+        // 脚を横向きにして配置
+        radialLeg.rotation.z = Math.PI / 2;
+        radialLeg.position.set(
+            Math.cos(angle) * (legLength / 2), 
+            baseHeight / 2, 
+            Math.sin(angle) * (legLength / 2)
+        );
+        
+        radialLeg.castShadow = true;
+        radialLeg.receiveShadow = true;
+        chair.add(radialLeg);
+    }
     
     return chair;
 }
