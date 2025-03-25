@@ -151,15 +151,38 @@ function addFurniture() {
         scene.add(table);
         furniture.studentTables.push(table);
 
-        // 椅子
-        const chair = ArtRoom.createChair(THREE);
-        chair.position.set(
+        // 各テーブルに3つの椅子を配置
+        // 椅子1（テーブルの後ろ側）
+        const chair1 = ArtRoom.createChair(THREE);
+        chair1.position.set(
             pos.x, 
             0, 
             pos.z + ArtRoom.DIMENSIONS.TABLE_LENGTH / 2 + ArtRoom.DIMENSIONS.CHAIR_DEPTH / 2
         );
-        scene.add(chair);
-        furniture.studentChairs.push(chair);
+        scene.add(chair1);
+        furniture.studentChairs.push(chair1);
+        
+        // 椅子2（テーブルの左側）
+        const chair2 = ArtRoom.createChair(THREE);
+        chair2.position.set(
+            pos.x - ArtRoom.DIMENSIONS.TABLE_WIDTH / 2 - ArtRoom.DIMENSIONS.CHAIR_DEPTH / 2, 
+            0, 
+            pos.z
+        );
+        chair2.rotation.y = Math.PI / 2; // 90度回転
+        scene.add(chair2);
+        furniture.studentChairs.push(chair2);
+        
+        // 椅子3（テーブルの右側）
+        const chair3 = ArtRoom.createChair(THREE);
+        chair3.position.set(
+            pos.x + ArtRoom.DIMENSIONS.TABLE_WIDTH / 2 + ArtRoom.DIMENSIONS.CHAIR_DEPTH / 2, 
+            0, 
+            pos.z
+        );
+        chair3.rotation.y = -Math.PI / 2; // -90度回転
+        scene.add(chair3);
+        furniture.studentChairs.push(chair3);
     });
 
     // イーゼルは削除
