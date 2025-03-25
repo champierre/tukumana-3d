@@ -248,9 +248,9 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     const top = new THREE.Mesh(topGeometry, topMaterial);
-    // テーブルトップの位置を調整して、脚の上部と接するようにする
-    // テーブルトップの厚さは height/10 なので、中心位置を height + (height/10)/2 に設定
-    top.position.y = height + (height / 10) / 2;
+    // テーブルトップの位置を下げる
+    // テーブルトップの上部が脚の上部よりも少し下になるように設定
+    top.position.y = height * 0.95;
     top.castShadow = true;
     top.receiveShadow = true;
     table.add(top);
