@@ -32,7 +32,7 @@ export const DIMENSIONS = {
     DOOR_HEIGHT: 2.2,     // ドアの高さ
     TABLE_WIDTH: 1.2,     // テーブルの幅
     TABLE_LENGTH: 0.8,    // テーブルの長さ
-    TABLE_HEIGHT: 0.75,   // テーブルの高さ
+    TABLE_HEIGHT: 0.6,   // テーブルの高さ
     CHAIR_WIDTH: 0.4,     // 椅子の幅
     CHAIR_DEPTH: 0.4,     // 椅子の奥行き
     CHAIR_HEIGHT: 0.45,   // 椅子の高さ
@@ -250,12 +250,10 @@ export function createTable(THREE, width, height, depth, color) {
     const top = new THREE.Mesh(topGeometry, topMaterial);
     // テーブルトップの位置を下げる
     // テーブルトップの上部が脚の上部よりも少し下になるように設定
-    top.position.y = height * 0.95;
+    top.position.y = height * 0.5;
     // テーブルトップを回転させる
     // y軸周りの回転（60度）
-    top.rotation.y = Math.PI / 3;
-    // x軸周りの回転（15度）を追加して傾けることで回転が見えるようにする
-    top.rotation.x = Math.PI / 12;
+    top.rotation.y = Math.PI / 6;
     top.castShadow = true;
     top.receiveShadow = true;
     table.add(top);
