@@ -278,7 +278,7 @@ function loadSTLModel(file) {
         // モデルの位置を調整（コの字型テーブルの上の中央）
         // furniture.uShapedTableの位置を直接参照して配置
         const tablePosition = furniture.uShapedTable.position.clone();
-        tablePosition.y += ArtRoom.DIMENSIONS.TABLE_HEIGHT / 2 + 0.05; // テーブルの上に少し浮かせる
+        tablePosition.y += ArtRoom.DIMENSIONS.TABLE_HEIGHT; // テーブルの高さ分だけ上げる
         mesh.position.copy(tablePosition);
         
         // 影の設定
