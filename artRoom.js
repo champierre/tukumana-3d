@@ -436,45 +436,19 @@ export function createUShapedTable(THREE, width, height, depth, color) {
     // 脚の太さ
     const legThickness = width / 30;
     
-    // 中央テーブルの脚（4本）
+    // テーブルの4隅に1本ずつ脚を配置
     const legPositions = [
-        { x: -width / 2 + legThickness, z: -depth / 2 + legThickness },
-        { x: -width / 2 + legThickness, z: depth / 2 - legThickness },
-        { x: width / 2 - legThickness, z: -depth / 2 + legThickness },
-        { x: width / 2 - legThickness, z: depth / 2 - legThickness }
+        // 左前の脚
+        { x: -width / 2 - thickness + legThickness / 2, z: depth / 2 - legThickness / 2 },
+        // 左後ろの脚
+        { x: -width / 2 - thickness + legThickness / 2, z: -depth / 2 + legThickness / 2 },
+        // 右前の脚
+        { x: width / 2 + thickness - legThickness / 2, z: depth / 2 - legThickness / 2 },
+        // 右後ろの脚
+        { x: width / 2 + thickness - legThickness / 2, z: -depth / 2 + legThickness / 2 }
     ];
     
     legPositions.forEach(pos => {
-        const legGeometry = new THREE.BoxGeometry(legThickness, height, legThickness);
-        const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, height / 2, pos.z);
-        leg.castShadow = true;
-        leg.receiveShadow = true;
-        table.add(leg);
-    });
-    
-    // 左側テーブルの脚（2本）
-    const leftLegPositions = [
-        { x: -width / 2 - thickness, z: -depth / 2 + legThickness },
-        { x: -width / 2 - thickness, z: depth / 2 - legThickness }
-    ];
-    
-    leftLegPositions.forEach(pos => {
-        const legGeometry = new THREE.BoxGeometry(legThickness, height, legThickness);
-        const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, height / 2, pos.z);
-        leg.castShadow = true;
-        leg.receiveShadow = true;
-        table.add(leg);
-    });
-    
-    // 右側テーブルの脚（2本）
-    const rightLegPositions = [
-        { x: width / 2 + thickness, z: -depth / 2 + legThickness },
-        { x: width / 2 + thickness, z: depth / 2 - legThickness }
-    ];
-    
-    rightLegPositions.forEach(pos => {
         const legGeometry = new THREE.BoxGeometry(legThickness, height, legThickness);
         const leg = new THREE.Mesh(legGeometry, legMaterial);
         leg.position.set(pos.x, height / 2, pos.z);
