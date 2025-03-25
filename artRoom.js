@@ -112,24 +112,46 @@ function createWalls(THREE, room) {
     backWall.receiveShadow = true;
     room.add(backWall);
 
-    // 黒板の追加
-    const blackboardGeometry = new THREE.BoxGeometry(
+    // 巨大ディスプレイの追加
+    const displayGroup = new THREE.Group();
+    
+    // ディスプレイ本体（薄型）
+    const displayGeometry = new THREE.BoxGeometry(
         DIMENSIONS.BLACKBOARD_WIDTH, 
         DIMENSIONS.BLACKBOARD_HEIGHT, 
-        DIMENSIONS.WALL_THICKNESS / 4
+        DIMENSIONS.WALL_THICKNESS / 8
     );
-    const blackboardMaterial = new THREE.MeshStandardMaterial({ 
-        color: COLORS.BLACKBOARD,
-        roughness: 0.9,
-        metalness: 0.1
+    const displayMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x111111, // ディスプレイの枠（黒）
+        roughness: 0.5,
+        metalness: 0.8
     });
-    const blackboard = new THREE.Mesh(blackboardGeometry, blackboardMaterial);
-    blackboard.position.set(
+    const display = new THREE.Mesh(displayGeometry, displayMaterial);
+    displayGroup.add(display);
+    
+    // ディスプレイの画面
+    const screenGeometry = new THREE.PlaneGeometry(
+        DIMENSIONS.BLACKBOARD_WIDTH - 0.1, 
+        DIMENSIONS.BLACKBOARD_HEIGHT - 0.1
+    );
+    const screenMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x0077cc, // 青色の画面
+        roughness: 0.1,
+        metalness: 0.5,
+        emissive: 0x003366, // 発光効果
+        emissiveIntensity: 0.5
+    });
+    const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+    screen.position.z = DIMENSIONS.WALL_THICKNESS / 8 + 0.001; // 少し前に出す
+    displayGroup.add(screen);
+    
+    // ディスプレイの位置設定
+    displayGroup.position.set(
         0, 
         DIMENSIONS.ROOM_HEIGHT / 2, 
-        -DIMENSIONS.ROOM_LENGTH / 2 + DIMENSIONS.WALL_THICKNESS / 2 + 0.01
+        -DIMENSIONS.ROOM_LENGTH / 2 + DIMENSIONS.WALL_THICKNESS / 2 + 0.02
     );
-    room.add(blackboard);
+    room.add(displayGroup);
 
     // 前の壁（ドアがある壁）
     const frontWallGeometry = new THREE.BoxGeometry(
