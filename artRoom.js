@@ -254,11 +254,72 @@ function createWindow(THREE, room, x, y, z) {
         roughness: 0.05,
         metalness: 0.95,
         transparent: true,
-        opacity: 0.2
+        opacity: 0.1 // さらに透明度を上げる
     });
     const glass = new THREE.Mesh(glassGeometry, glassMaterial);
     glass.position.set(x, y, z);
     room.add(glass);
+    
+    // 窓の外の景色（空）
+    const outsideGeometry = new THREE.PlaneGeometry(
+        DIMENSIONS.WINDOW_HEIGHT - 0.15, 
+        DIMENSIONS.WINDOW_WIDTH - 0.15
+    );
+    
+    // 空のグラデーション
+    const skyCanvas = document.createElement('canvas');
+    skyCanvas.width = 512;
+    skyCanvas.height = 512;
+    const skyContext = skyCanvas.getContext('2d');
+    
+    // グラデーションの作成
+    const gradient = skyContext.createLinearGradient(0, 0, 0, 512);
+    gradient.addColorStop(0, '#87CEEB'); // 空色（上部）
+    gradient.addColorStop(0.7, '#E0F7FF'); // 薄い空色（中部）
+    gradient.addColorStop(1, '#7CFC00'); // 草原色（下部）
+    
+    skyContext.fillStyle = gradient;
+    skyContext.fillRect(0, 0, 512, 512);
+    
+    // 雲を追加
+    skyContext.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    skyContext.beginPath();
+    skyContext.arc(100, 100, 40, 0, Math.PI * 2);
+    skyContext.arc(140, 90, 50, 0, Math.PI * 2);
+    skyContext.arc(180, 100, 40, 0, Math.PI * 2);
+    skyContext.fill();
+    
+    skyContext.beginPath();
+    skyContext.arc(350, 150, 30, 0, Math.PI * 2);
+    skyContext.arc(390, 140, 40, 0, Math.PI * 2);
+    skyContext.arc(430, 150, 30, 0, Math.PI * 2);
+    skyContext.fill();
+    
+    // テクスチャの作成
+    const skyTexture = new THREE.CanvasTexture(skyCanvas);
+    
+    const outsideMaterial = new THREE.MeshBasicMaterial({
+        map: skyTexture,
+        side: THREE.DoubleSide
+    });
+    
+    const outside = new THREE.Mesh(outsideGeometry, outsideMaterial);
+    
+    // 窓の外側に配置（壁の外側）
+    // 窓の向きに応じて回転と位置を調整
+    if (Math.abs(x) > Math.abs(z)) {
+        // 左右の壁の窓
+        outside.rotation.y = Math.PI / 2;
+        const offset = x > 0 ? 0.2 : -0.2; // 右側か左側かで調整
+        outside.position.set(x + offset, y, z);
+    } else {
+        // 前後の壁の窓（もし追加する場合）
+        outside.rotation.x = Math.PI / 2;
+        const offset = z > 0 ? 0.2 : -0.2; // 前側か後側かで調整
+        outside.position.set(x, y, z + offset);
+    }
+    
+    room.add(outside);
 }
 
 // テーブルを作成する関数
