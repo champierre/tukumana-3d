@@ -225,6 +225,9 @@ function loadSTLModel(file) {
         const scale = 0.5 / maxDim; // モデルの最大サイズを0.5メートルに制限
         mesh.scale.set(scale, scale, scale);
         
+        // モデルを90度回転させる（横倒しになっているのを修正）
+        mesh.rotation.x = -Math.PI / 2; // X軸周りに-90度回転
+        
         // モデルの位置を調整（教師用デスクの上）
         mesh.position.set(
             -ArtRoom.DIMENSIONS.ROOM_WIDTH / 4, 
