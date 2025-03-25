@@ -248,7 +248,7 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     const top = new THREE.Mesh(topGeometry, topMaterial);
-    top.rotation.x = Math.PI / 2; // 円柱を横向きにする
+    // 回転を削除して床と平行にする
     top.position.y = height - height / 20;
     top.castShadow = true;
     top.receiveShadow = true;
