@@ -2,12 +2,15 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.136.0';
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js';
+import { STLLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/STLLoader.js';
 import * as ArtRoom from './artRoom.js';
 
 // 基本的な変数
 let scene, camera, renderer, controls;
 let room, furniture = {};
 let isInitialized = false;
+let stlModel = null; // STLモデル用の変数
+
 
 // 初期化関数
 function init() {
@@ -191,5 +194,84 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// ページ読み込み時に初期化を実行
-window.addEventListener('load', init);
+// STLファイルをロードする関数
+function loadSTLModel(file) {
+    // 既存のSTLモデルがあれば削除
+    if (stlModel) {
+        scene.remove(stlModel);
+    }
+
+    const reader = new FileReader();
+    reader.addEventListener('load', function(event) {
+        const contents = event.target.result;
+        
+        const loader = new STLLoader();
+        const geometry = loader.parse(contents);
+        
+        // マテリアルの作成
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x1E90FF, // ドジャーブルー
+            roughness: 0.7,
+            metalness: 0.3
+        });
+        
+        // メッシュの作成
+        const mesh = new THREE.Mesh(geometry, material);
+        
+        // モデルのサイズを調整
+        const box = new THREE.Box3().setFromObject(mesh);
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 0.5 / maxDim; // モデルの最大サイズを0.5メートルに制限
+        mesh.scale.set(scale, scale, scale);
+        
+        // モデルを90度回転させる（横倒しになっているのを修正）
+        mesh.rotation.x = -Math.PI / 2; // X軸周りに-90度回転
+        
+        // モデルの位置を調整（教師用デスクの上）
+        mesh.position.set(
+            -ArtRoom.DIMENSIONS.ROOM_WIDTH / 4, 
+            ArtRoom.DIMENSIONS.TABLE_HEIGHT + 0.05, // テーブルの上に少し浮かせる
+            -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3
+        );
+        
+        // 影の設定
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        
+        // シーンに追加
+        scene.add(mesh);
+        stlModel = mesh;
+    });
+    
+    reader.readAsArrayBuffer(file);
+}
+
+// ドラッグ＆ドロップのイベントハンドラを設定
+function setupDragAndDrop() {
+    const container = document.getElementById('canvas-container');
+    
+    // ドラッグオーバーイベント
+    container.addEventListener('dragover', function(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    });
+    
+    // ドロップイベント
+    container.addEventListener('drop', function(event) {
+        event.preventDefault();
+        
+        const file = event.dataTransfer.files[0];
+        if (file && file.name.toLowerCase().endsWith('.stl')) {
+            loadSTLModel(file);
+        } else {
+            alert('STLファイルをドロップしてください。');
+        }
+    });
+}
+
+// 初期化時にドラッグ＆ドロップの設定を追加
+window.addEventListener('load', function() {
+    init();
+    setupDragAndDrop();
+});
