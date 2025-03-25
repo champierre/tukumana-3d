@@ -260,10 +260,10 @@ function createWindow(THREE, room, x, y, z) {
     glass.position.set(x, y, z);
     room.add(glass);
     
-    // 窓の外の景色（空）
+    // 窓の外の景色（空）- 窓枠の内側に配置
     const outsideGeometry = new THREE.PlaneGeometry(
-        DIMENSIONS.WINDOW_HEIGHT - 0.15, 
-        DIMENSIONS.WINDOW_WIDTH - 0.15
+        DIMENSIONS.WINDOW_WIDTH - 0.2, 
+        DIMENSIONS.WINDOW_HEIGHT - 0.2
     );
     
     // 空のグラデーション
@@ -300,23 +300,36 @@ function createWindow(THREE, room, x, y, z) {
     
     const outsideMaterial = new THREE.MeshBasicMaterial({
         map: skyTexture,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 1.0
     });
     
     const outside = new THREE.Mesh(outsideGeometry, outsideMaterial);
     
-    // 窓の外側に配置（壁の外側）
-    // 窓の向きに応じて回転と位置を調整
+    // 窓の内側に配置（窓ガラスのすぐ後ろ）
     if (Math.abs(x) > Math.abs(z)) {
         // 左右の壁の窓
-        outside.rotation.y = Math.PI / 2;
-        const offset = x > 0 ? 0.2 : -0.2; // 右側か左側かで調整
+        const offset = x > 0 ? -0.05 : 0.05; // 右側か左側かで調整（内側に配置）
         outside.position.set(x + offset, y, z);
+        
+        // 窓の向きに合わせて回転
+        if (x > 0) { // 右側の壁
+            outside.rotation.y = Math.PI / 2;
+        } else { // 左側の壁
+            outside.rotation.y = -Math.PI / 2;
+        }
     } else {
         // 前後の壁の窓（もし追加する場合）
-        outside.rotation.x = Math.PI / 2;
-        const offset = z > 0 ? 0.2 : -0.2; // 前側か後側かで調整
+        const offset = z > 0 ? -0.05 : 0.05; // 前側か後側かで調整（内側に配置）
         outside.position.set(x, y, z + offset);
+        
+        // 窓の向きに合わせて回転
+        if (z > 0) { // 前側の壁
+            outside.rotation.y = Math.PI;
+        } else { // 後側の壁
+            outside.rotation.y = 0;
+        }
     }
     
     room.add(outside);
