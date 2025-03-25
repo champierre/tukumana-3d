@@ -251,8 +251,11 @@ export function createTable(THREE, width, height, depth, color) {
     // テーブルトップの位置を下げる
     // テーブルトップの上部が脚の上部よりも少し下になるように設定
     top.position.y = height * 0.95;
-    // テーブルトップを60度（π/3ラジアン）回転させる
+    // テーブルトップを回転させる
+    // y軸周りの回転（60度）
     top.rotation.y = Math.PI / 3;
+    // x軸周りの回転（15度）を追加して傾けることで回転が見えるようにする
+    top.rotation.x = Math.PI / 12;
     top.castShadow = true;
     top.receiveShadow = true;
     table.add(top);
