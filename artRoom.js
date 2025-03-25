@@ -32,7 +32,7 @@ export const DIMENSIONS = {
     DOOR_HEIGHT: 2.2,     // ドアの高さ
     TABLE_WIDTH: 1.2,     // テーブルの幅
     TABLE_LENGTH: 0.8,    // テーブルの長さ
-    TABLE_HEIGHT: 0.75,   // テーブルの高さ
+    TABLE_HEIGHT: 0.6,   // テーブルの高さ
     CHAIR_WIDTH: 0.4,     // 椅子の幅
     CHAIR_DEPTH: 0.4,     // 椅子の奥行き
     CHAIR_HEIGHT: 0.45,   // 椅子の高さ
@@ -248,8 +248,12 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     const top = new THREE.Mesh(topGeometry, topMaterial);
-    // 回転を削除して床と平行にする
-    top.position.y = height - height / 20;
+    // テーブルトップの位置を下げる
+    // テーブルトップの上部が脚の上部よりも少し下になるように設定
+    top.position.y = height * 0.5;
+    // テーブルトップを回転させる
+    // y軸周りの回転（60度）
+    top.rotation.y = Math.PI / 6;
     top.castShadow = true;
     top.receiveShadow = true;
     table.add(top);
@@ -262,17 +266,19 @@ export function createTable(THREE, width, height, depth, color) {
         metalness: 0.2
     });
     
-    // 6本の脚を追加（六角形の各頂点に）
+    // 6本の脚を追加（六角形の内側、頂点から床に垂直に）
     const legPositions = [];
     for (let i = 0; i < 6; i++) {
         const angle = (Math.PI / 3) * i;
-        const x = Math.cos(angle) * (radius - width / 40);
-        const z = Math.sin(angle) * (radius - depth / 40);
+        // 六角形の内側に脚を配置（半径の60%の位置）
+        const x = Math.cos(angle) * (radius * 0.8);
+        const z = Math.sin(angle) * (radius * 0.8);
         legPositions.push({ x, z });
     }
     
     legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
+        // 脚の位置を床に接するように設定（y=0）
         leg.position.set(pos.x, 0, pos.z);
         leg.castShadow = true;
         leg.receiveShadow = true;
