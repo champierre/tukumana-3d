@@ -105,7 +105,7 @@ function addFurniture() {
     );
     uShapedTable.position.set(
         0, // 中央に配置
-        ArtRoom.DIMENSIONS.TABLE_HEIGHT / 2,
+        0, // 床と接するように高さを0に設定
         -ArtRoom.DIMENSIONS.ROOM_LENGTH / 3 + ArtRoom.DIMENSIONS.TABLE_LENGTH * 2 // ディスプレイから少し離す
     );
     scene.add(uShapedTable);
