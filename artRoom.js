@@ -220,6 +220,10 @@ function createWalls(THREE, room) {
     );
     rightWall.receiveShadow = true;
     room.add(rightWall);
+    
+    // 右側の壁に窓を追加
+    createWindow(THREE, room, DIMENSIONS.ROOM_WIDTH / 2, DIMENSIONS.ROOM_HEIGHT / 2, -DIMENSIONS.ROOM_LENGTH / 4);
+    createWindow(THREE, room, DIMENSIONS.ROOM_WIDTH / 2, DIMENSIONS.ROOM_HEIGHT / 2, DIMENSIONS.ROOM_LENGTH / 4);
 }
 
 // 窓を作成する関数
