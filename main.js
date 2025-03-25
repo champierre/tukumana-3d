@@ -159,23 +159,8 @@ function addFurniture() {
         furniture.studentChairs.push(chair);
     });
 
-    // イーゼル（複数）
-    const easelPositions = [
-        { x: -3, z: -1 },
-        { x: -1.5, z: -1 },
-        { x: 0, z: -1 },
-        { x: 1.5, z: -1 },
-        { x: 3, z: -1 }
-    ];
-
+    // イーゼルは削除
     furniture.easels = [];
-
-    easelPositions.forEach((pos) => {
-        const easel = ArtRoom.createEasel(THREE);
-        easel.position.set(pos.x, 0, pos.z);
-        scene.add(easel);
-        furniture.easels.push(easel);
-    });
 
     // 棚（美術用品用）
     const shelf = ArtRoom.createShelf(THREE);
